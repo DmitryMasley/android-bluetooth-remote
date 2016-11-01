@@ -34,4 +34,12 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="44dp"
         android:id="@+id/off" />
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/on"
+        android:layout_marginTop="36dp"
+        android:id="@+id/speed"
+        android:minHeight="77dp" />
 </RelativeLayout>
