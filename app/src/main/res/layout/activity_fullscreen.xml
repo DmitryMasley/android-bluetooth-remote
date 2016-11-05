@@ -1,0 +1,48 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0099cc"
+    tools:context="com.example.dmasley.androidbluetoothremote.FullscreenActivity">
+
+    <!-- The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc. -->
+
+    <!-- This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows. -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:text="off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="86dp"
+            android:id="@+id/off"
+            android:layout_alignBaseline="@+id/on"
+            android:layout_alignBottom="@+id/on"
+            android:layout_alignParentEnd="true" />
+
+        <Button
+            android:text="on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="69dp"
+            android:layout_marginTop="71dp"
+            android:id="@+id/on"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/speed"
+            android:layout_below="@+id/off"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="79dp"
+            android:minHeight="71dp" />
+    </RelativeLayout>
+</FrameLayout>

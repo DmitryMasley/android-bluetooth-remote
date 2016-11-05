@@ -5,4 +5,5 @@ package com.example.dmasley.androidbluetoothremote.bluetooth;
  */
 
 public class ConnectionThread extends Thread {
+
 }
