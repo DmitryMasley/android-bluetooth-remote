@@ -1,6 +1,7 @@
 package com.example.dmasley.androidbluetoothremote;
 
 import com.example.dmasley.androidbluetoothremote.BluetoothDeviceItemView;
+import com.example.dmasley.androidbluetoothremote.FullscreenActivity;
 
 import android.bluetooth.BluetoothDevice;
 import android.support.v7.app.AppCompatActivity;
@@ -54,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 BluetoothDeviceItemView item = (BluetoothDeviceItemView) devicesList.getItemAtPosition(position);
+                Intent intent = new Intent(MainActivity.this, FullscreenActivity.class);
+                intent.putExtra("deviceAddress", item.deviceAddress);
+                startActivity(intent);
             }
         });
 

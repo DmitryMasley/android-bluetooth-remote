@@ -1,4 +1,5 @@
 package com.example.dmasley.androidbluetoothremote.bluetooth;
+import com.example.dmasley.androidbluetoothremote.bluetooth.ConnectionThread;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -15,6 +16,7 @@ import java.util.UUID;
 public class ConnectionCreationThread extends Thread {
     private final BluetoothDevice device;
     private final BluetoothSocket socket;
+    private ConnectionThread connectionThread;
     final BluetoothAdapter adapter;
     private UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
@@ -47,11 +49,15 @@ public class ConnectionCreationThread extends Thread {
             try {
                 socket.close();
             } catch (IOException closeException){
-
+                return;
             }
             return;
         }
+        manageConnectedSocket(socket);
 
+    }
+    private void manageConnectedSocket(BluetoothSocket socket){
+        connectionThread = new ConnectionThread(socket);
     }
     public void cancel() {
         try {

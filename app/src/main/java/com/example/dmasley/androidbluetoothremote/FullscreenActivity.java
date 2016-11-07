@@ -1,6 +1,9 @@
 package com.example.dmasley.androidbluetoothremote;
 
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,11 +13,35 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 
+import java.util.Set;
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class FullscreenActivity extends AppCompatActivity {
+    final BluetoothDevice device;
+    FullscreenActivity(){
+        Intent intent  = getIntent();
+        String deviceAddress = intent.getStringExtra("deviceAddress");
+        BluetoothDevice tmpDevice = null;
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        if(adapter != null){
+            Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
+            if(pairedDevices.size() > 0){
+                for(BluetoothDevice currentDevice : pairedDevices){
+                    if(currentDevice.getAddress().equals(deviceAddress)){
+                        tmpDevice = currentDevice;
+                        break;
+                    }
+                }
+
+            }
+
+        }
+        device = tmpDevice;
+
+    }
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -94,6 +121,7 @@ public class FullscreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_fullscreen);
+
 
         mVisible = true;
 
