@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     }
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADMIN)
     void initBt(){
-        devicesArrayAdapter = new ArrayAdapter<BluetoothDeviceItemView>(this, android.R.layout.simple_list_item_1 );
+        devicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1 );
         devicesList.setAdapter(devicesArrayAdapter);
 
         btReceiver = new BroadcastReceiver() {
@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     BluetoothDeviceItemView item = new BluetoothDeviceItemView(device.getName(), device.getAddress(), device);
                     devicesArrayAdapter.add(item);
+                    // show paired devices first
                     devicesArrayAdapter.sort(new Comparator<BluetoothDeviceItemView>(){
                         @Override
                         public int compare(BluetoothDeviceItemView device1, BluetoothDeviceItemView device2){
@@ -99,15 +100,10 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(btReceiver, intentFilter);
         adapter.startDiscovery();
     }
-    void showBTDevices(){
-
-    }
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == RESULT_OK) {
                 this.initBt();
-            } else {
-
             }
         }
     }
