@@ -64,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
         devicesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                BluetoothDeviceItemView item = (BluetoothDeviceItemView) devicesList.getItemAtPosition(position);
+                BluetoothDeviceItemView item = devicesArrayAdapter.getItem(position);
                 Intent intent = new Intent(MainActivity.this, FullscreenActivity.class);
-                intent.putExtra("deviceAddress", item.deviceAddress);
+                intent.putExtra("device", item.device);
                 startActivity(intent);
             }
         });

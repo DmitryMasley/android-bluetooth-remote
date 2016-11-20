@@ -16,12 +16,12 @@ import java.util.UUID;
 public class ConnectionCreationThread extends Thread {
     private final BluetoothDevice device;
     private final BluetoothSocket socket;
-    private ConnectionThread connectionThread;
+    public ConnectionThread connectionThread;
     final BluetoothAdapter adapter;
     private UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     String MY_UUID = "MY_UID";
-    ConnectionCreationThread(BluetoothDevice d, BluetoothAdapter a){
+    public ConnectionCreationThread(BluetoothDevice d, BluetoothAdapter a){
         device = d;
         adapter = a;
         BluetoothSocket tmpSocket = null;
@@ -62,6 +62,9 @@ public class ConnectionCreationThread extends Thread {
     public void cancel() {
         try {
             socket.close();
+            if(null != connectionThread){
+                connectionThread.cancel();
+            }
         } catch (IOException e) { }
     }
 }
