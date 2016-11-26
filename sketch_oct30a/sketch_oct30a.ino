@@ -1,4 +1,5 @@
 #include <SoftwareSerial.h>
+#include <Servo.h>
 
 SoftwareSerial mySerial(2, 3); // RX, TX
 #define BLUETOOTH_SPEED 9600
@@ -13,9 +14,11 @@ int speedPinA = 10;
 unsigned long time;
 int speed;
 int dir;
+Servo steer;
 
 void setup() {
-  
+  steer.attach(4);
+  steer.write(90);
   Serial.begin(38400);
   
   pinMode(dir1PinA, OUTPUT);
@@ -80,14 +83,25 @@ void loop() {
       analogWrite(speedPinA, 0);
         Serial.println(command);
       break;
+    case 'L': 
+      steer.write(20);
+      break;
+    case 'R':
+      steer.write(160);
+      break;
+    case 'S':
+      steer.write(90);
+      break;
   }
   }
  
-//  // set direction
+  // set direction
 //  if (1 == dir) {
+//    steer.write(20);
 //    digitalWrite(dir1PinA, LOW);
 //    digitalWrite(dir2PinA, HIGH);
 //  } else {
+//    steer.write(160);
 //    digitalWrite(dir1PinA, HIGH);
 //    digitalWrite(dir2PinA, LOW);
 //  }
