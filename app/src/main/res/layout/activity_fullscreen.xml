@@ -44,5 +44,33 @@
             android:layout_alignParentStart="true"
             android:layout_marginTop="79dp"
             android:minHeight="71dp" />
+
+        <Button
+            android:text="Right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/left"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="21dp"
+            android:id="@+id/right" />
+
+        <Button
+            android:text="Left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:id="@+id/left"
+            android:layout_below="@+id/speed"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="14dp" />
+
+        <Button
+            android:text="Straight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/straight"
+            android:layout_alignBaseline="@+id/right"
+            android:layout_alignBottom="@+id/right"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 </FrameLayout>

@@ -13,8 +13,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import java.math.BigInteger;
 
 import java.util.Set;
+
+enum STATE {
+    NOT_CONNECTED,
+    CONNECTING,
+    CONNECTED
+}
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -22,6 +29,7 @@ import java.util.Set;
  */
 public class FullscreenActivity extends AppCompatActivity {
     private BluetoothDevice device;
+    private STATE state;
     ConnectionCreationThread create;
     FullscreenActivity(){
 
@@ -47,6 +55,9 @@ public class FullscreenActivity extends AppCompatActivity {
     private final Handler mHideHandler = new Handler();
     Button onButton;
     Button offButton;
+    Button leftButton;
+    Button rightButton;
+    Button streightButton;
     SeekBar speedBar;
 
     @Override
@@ -66,6 +77,9 @@ public class FullscreenActivity extends AppCompatActivity {
     void initializeUI(){
         onButton = (Button) findViewById(R.id.on);
         offButton = (Button) findViewById(R.id.off);
+        leftButton = (Button) findViewById(R.id.left);
+        rightButton = (Button) findViewById(R.id.right);
+        streightButton = (Button) findViewById(R.id.straight);
         speedBar = (SeekBar) findViewById(R.id.speed);
 
         onButton.setOnClickListener(new View.OnClickListener() {
@@ -80,10 +94,30 @@ public class FullscreenActivity extends AppCompatActivity {
                 create.connectionThread.write("B".getBytes());
             }
         });
+        leftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                create.connectionThread.write("L".getBytes());
+            }
+        });
+        rightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                create.connectionThread.write("R".getBytes());
+            }
+        });
+        streightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                create.connectionThread.write("S".getBytes());
+            }
+        });
+
         speedBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+                byte[] value = BigInteger.valueOf((long)progress).toByteArray();
+                create.connectionThread.write(value);
             }
 
             @Override
@@ -96,6 +130,16 @@ public class FullscreenActivity extends AppCompatActivity {
 
             }
         });
+    }
+    public void onPause(){
+        super.onPause();
+        create.cancel();
+        create = null;
+    }
+    public void onResume(){
+        super.onResume();
+        create = new ConnectionCreationThread(device, BluetoothAdapter.getDefaultAdapter());
+        create.start();
     }
     protected void onDestroy(){
         if(null != create){
