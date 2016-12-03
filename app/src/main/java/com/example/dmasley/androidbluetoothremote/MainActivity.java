@@ -13,16 +13,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.view.View;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.widget.ProgressBar;
+
 import com.example.dmasley.androidbluetoothremote.bluetooth.ConnectionThread;
 
 import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
     ListView devicesList;
+    ProgressBar progress;
+    Button startDiscovery;
+    Button stopDiscovery;
     int REQUEST_ENABLE_BT;
     final BluetoothAdapter adapter;
     private BroadcastReceiver btReceiver;
@@ -60,6 +66,23 @@ public class MainActivity extends AppCompatActivity {
     }
     protected void initializeUi(){
 
+        progress = (ProgressBar) findViewById(R.id.progressBar);
+        startDiscovery = (Button) findViewById(R.id.start_discovery);
+        stopDiscovery = (Button) findViewById(R.id.stop_discovery);
+
+        startDiscovery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startDiscoverDevices();
+            }
+        });
+        stopDiscovery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopDiscoverDevices();
+            }
+        });
+        progress.setVisibility(View.GONE);
         devicesList = (ListView) findViewById(R.id.devices);
         devicesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -85,20 +108,37 @@ public class MainActivity extends AppCompatActivity {
                 if(BluetoothDevice.ACTION_FOUND.equals(action)){
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     BluetoothDeviceItemView item = new BluetoothDeviceItemView(device.getName(), device.getAddress(), device);
-                    devicesArrayAdapter.add(item);
-                    // show paired devices first
-                    devicesArrayAdapter.sort(new Comparator<BluetoothDeviceItemView>(){
-                        @Override
-                        public int compare(BluetoothDeviceItemView device1, BluetoothDeviceItemView device2){
-                            return device2.compareTo(device1);
+                    boolean alreadyInList = false;
+                    for(int i = 0; i< devicesArrayAdapter.getCount(); i++){
+                        BluetoothDeviceItemView btItem = devicesArrayAdapter.getItem(i);
+                        if(btItem.getDeviceAddress().equals(item.getDeviceAddress())){
+                            alreadyInList = true;
                         }
-                    });
+                    }
+                    if(!alreadyInList){
+                        devicesArrayAdapter.add(item);
+                        // show paired devices first
+                        devicesArrayAdapter.sort(new Comparator<BluetoothDeviceItemView>(){
+                            @Override
+                            public int compare(BluetoothDeviceItemView device1, BluetoothDeviceItemView device2){
+                                return device2.compareTo(device1);
+                            }
+                        });
+                    }
                 }
             }
         };
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(btReceiver, intentFilter);
+        startDiscoverDevices();
+    }
+    void startDiscoverDevices(){
         adapter.startDiscovery();
+        progress.setVisibility(View.VISIBLE);
+    }
+    void stopDiscoverDevices(){
+        adapter.cancelDiscovery();
+        progress.setVisibility(View.GONE);
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == REQUEST_ENABLE_BT) {
