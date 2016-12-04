@@ -8,7 +8,9 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.support.annotation.RequiresPermission;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.AdapterView;
@@ -29,7 +31,8 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progress;
     Button startDiscovery;
     Button stopDiscovery;
-    int REQUEST_ENABLE_BT;
+    final int REQUEST_ENABLE_BT = 1;
+    final int REQUEST_COARSE_LOCATION_PERMISSIONS = 2;
     final BluetoothAdapter adapter;
     private BroadcastReceiver btReceiver;
     private ArrayAdapter<BluetoothDeviceItemView> devicesArrayAdapter;
@@ -133,12 +136,29 @@ public class MainActivity extends AppCompatActivity {
         startDiscoverDevices();
     }
     void startDiscoverDevices(){
-        adapter.startDiscovery();
-        progress.setVisibility(View.VISIBLE);
+        int hasPermission = ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        if (hasPermission == PackageManager.PERMISSION_GRANTED) {
+            adapter.startDiscovery();
+            progress.setVisibility(View.VISIBLE);
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            }, REQUEST_COARSE_LOCATION_PERMISSIONS);
+        }
     }
     void stopDiscoverDevices(){
         adapter.cancelDiscovery();
         progress.setVisibility(View.GONE);
+    }
+    public void onResume(){
+        if(null != progress) {
+            if (adapter.isDiscovering()) {
+                progress.setVisibility(View.VISIBLE);
+            } else {
+                progress.setVisibility(View.GONE);
+            }
+        }
+        super.onResume();
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == REQUEST_ENABLE_BT) {
@@ -146,5 +166,11 @@ public class MainActivity extends AppCompatActivity {
                 this.initBt();
             }
         }
+        if(requestCode == REQUEST_COARSE_LOCATION_PERMISSIONS){
+            if(resultCode == RESULT_OK){
+                this.startDiscoverDevices();
+            }
+        }
+
     }
 }
