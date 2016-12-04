@@ -27,12 +27,11 @@ public class ConnectionCreationThread extends Thread {
         BluetoothSocket tmpSocket = null;
         try {
             UUID deviceUUID;
-            if(device.getUuids().length > 0){
+            if(null != device.getUuids() && device.getUuids().length > 0){
                 deviceUUID = device.getUuids()[0].getUuid();
             } else {
                 deviceUUID = DEFAULT_UUID;
             }
-            device.getUuids()[0].getUuid();
             tmpSocket = device.createRfcommSocketToServiceRecord(deviceUUID);
         } catch (IOException e){
 
