@@ -5,17 +5,24 @@ SoftwareSerial mySerial(2, 3); // RX, TX
 #define BLUETOOTH_SPEED 9600
 #define ROBOT_NAME "Lego Robot"
 
+// motor B
+//int dir1PinB = 11;
+//int dir2PinB = 8;
+//int speedPinB = 9;
+
+
+
 // motor A
 int dir1PinA = 13;
 int dir2PinA = 12;
-int speedPinA = 10;
+int speedPinA = 5;
+int servocePin = 9;
 
 String currentSteering = "";
 Servo steer;
 
 void setup() {
-//  steer.attach(4);
-  steer.write(90);
+  steer.attach(servocePin);
   Serial.begin(38400);
   
   pinMode(dir1PinA, OUTPUT);
@@ -58,6 +65,7 @@ void waitForResponse() {
     Serial.write("\n");
 }
 void loop() {
+  
   if(mySerial.available() > 0){
   String command = mySerial.readStringUntil('\n');
   char cmd[command.length()];
