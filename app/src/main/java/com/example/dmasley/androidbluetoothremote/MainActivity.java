@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
                         BluetoothDeviceItemView btItem = devicesArrayAdapter.getItem(i);
                         if(btItem.getDeviceAddress().equals(item.getDeviceAddress())){
                             alreadyInList = true;
+                            break;
                         }
                     }
                     if(!alreadyInList){
@@ -159,6 +160,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         super.onResume();
+    }
+    public void onPause() {
+        this.stopDiscoverDevices();
+        super.onPause();
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == REQUEST_ENABLE_BT) {
