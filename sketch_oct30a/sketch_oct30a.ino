@@ -6,8 +6,8 @@ SoftwareSerial mySerial(2, 3); // RX, TX
 #define ROBOT_NAME "Lego Robot"
 
 // motor B
-int dir1PinB = 11;
-int dir2PinB = 8;
+int dir1PinB = 8;
+int dir2PinB = 11;
 int speedPinB = 9;
 
 
@@ -15,14 +15,11 @@ int speedPinB = 9;
 // motor A
 int dir1PinA = 13;
 int dir2PinA = 12;
-int speedPinA = 5;
-int servocePin = 4;
+int speedPinA = 10;
 
 String currentSteering = "";
-Servo steer;
 
-void setup() {
-  steer.attach(servocePin);
+void setup() {;
   Serial.begin(BLUETOOTH_SPEED);
   
   pinMode(dir1PinB, OUTPUT);
@@ -48,6 +45,7 @@ void waitForResponse() {
 void loop() {
   if(Serial.available() > 0){
     String command = Serial.readStringUntil('\n');
+    Serial.println(command);
     char cmd[command.length()];
     char * ptr;
     Serial.print("String Length:");
@@ -72,31 +70,43 @@ void loop() {
         Serial.println("Go Back");
           digitalWrite(dir1PinA, LOW);
           digitalWrite(dir2PinA, HIGH);
+          digitalWrite(dir1PinB, LOW);
+          digitalWrite(dir2PinB, HIGH);
       }else if(direction.equals("Dir:FORWARD")){
         Serial.println("Go Froward");
           digitalWrite(dir1PinA, HIGH);
           digitalWrite(dir2PinA, LOW);    
+          digitalWrite(dir1PinB, HIGH);
+          digitalWrite(dir2PinB, LOW); 
       }
-      analogWrite(speedPinA, speedValue);
+    
     } else {
       digitalWrite(dir1PinA, LOW);
       digitalWrite(dir2PinA, LOW);
       analogWrite(speedPinA, 0);
+      digitalWrite(dir1PinB, LOW);
+      digitalWrite(dir2PinB, LOW);
+      analogWrite(speedPinB, 0);
     }
-    if(!currentSteering.equals(steering)){
       if(steering.equals("Steer:LEFT")){
         Serial.println("Go left");
-        steer.write(20);
+        if(speedValue > 0){
+          analogWrite(speedPinA, speedValue);
+          analogWrite(speedPinB, 0);
+        }
       } else if(steering.equals("Steer:RIGHT")){
         Serial.println("Go right");
-        steer.write(160);
+       if(speedValue > 0){
+          analogWrite(speedPinA, 0);
+          analogWrite(speedPinB, speedValue);
+        }
       } else if(steering.equals("Steer:STRAIGHT")){
         Serial.println("Go straight");
-        steer.write(90);
+        analogWrite(speedPinA, speedValue);
+        analogWrite(speedPinB, speedValue);
       }
       currentSteering = steering;
-    }
     Serial.println("Command:" + command);
-  }
+  
 }
-
+}

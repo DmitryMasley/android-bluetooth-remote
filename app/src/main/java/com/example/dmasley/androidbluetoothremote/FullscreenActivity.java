@@ -164,7 +164,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     }
     private String getCommand(){
         String command = "Dir:"+dir.name()+"|Speed:"+String.valueOf(speed)+"|Steer:"+steer.name()+"|\n";
-        Log.v("Command",command);
+        Log.d("Command",command);
         return command;
     }
     public void onPause(){
@@ -211,10 +211,10 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     private void orientationUpdated(){
         float x = orientation[1];
         float y = orientation[2];
-        if(x > 0.3){
+        if(x > 0.15){
             steerAngle = 20;
             steer = Steering.LEFT;
-        } else if(x < -0.3){
+        } else if(x < -0.15){
             steerAngle = 160;
             steer = Steering.RIGHT;
         } else {
