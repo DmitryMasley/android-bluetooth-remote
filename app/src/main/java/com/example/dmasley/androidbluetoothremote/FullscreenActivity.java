@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.SeekBar;
 import android.hardware.Sensor;
 import android.content.Context;
@@ -58,12 +59,9 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     }
 
     private final Handler mHideHandler = new Handler();
-    Button forwardButton;
-    Button backButton;
-    Button leftButton;
-    Button rightButton;
-    Button streightButton;
-    SeekBar speedBar;
+
+    TextView speedText;
+    TextView steerText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,82 +87,25 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     }
 
     void initializeUI(){
-        forwardButton = (Button) findViewById(R.id.forward);
-        backButton = (Button) findViewById(R.id.back);
-        leftButton = (Button) findViewById(R.id.left);
-        rightButton = (Button) findViewById(R.id.right);
-        streightButton = (Button) findViewById(R.id.straight);
-        speedBar = (SeekBar) findViewById(R.id.speed);
-
-        speedBar.setMax(255);
-
-        forwardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dir = Direction.FORWARD;
-                sendMessage();
-//                create.connectionThread.write("A".getBytes());
-            }
-        });
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dir = Direction.BACK;
-                sendMessage();
-//                create.connectionThread.write("B".getBytes());
-            }
-        });
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                steer = Steering.LEFT;
-                sendMessage();
-//                create.connectionThread.write("L".getBytes());
-            }
-        });
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                steer = Steering.RIGHT;
-                sendMessage();
-//                create.connectionThread.write("R".getBytes());
-            }
-        });
-        streightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                steer = Steering.STRAIGHT;
-                sendMessage();
-//                create.connectionThread.write("S".getBytes());
-            }
-        });
-
-        speedBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                byte[] value = BigInteger.valueOf((long)progress).toByteArray();
-                speed = progress;
-//                create.connectionThread.write(value);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                sendMessage();
-            }
-        });
+        speedText = (TextView) findViewById(R.id.speed);
+        steerText = (TextView) findViewById(R.id.steer);
+    }
+    void updateUI() {
+        double speedValue = speed;
+        if(dir == Direction.BACK) {
+            speedValue = -speedValue;
+        }
+        speedText.setText(String.valueOf(speedValue));
+        steerText.setText(String.valueOf(steerAngle));
     }
     void sendMessage(){
+        updateUI();
         if(null != create && null != create.connectionThread) {
             create.connectionThread.write(this.getCommand().getBytes());
         }
     }
     private String getCommand(){
-        String command = dir.ordinal()+"|"+String.valueOf(speed)+"|"+steer.ordinal()+"|" + steerAngle + "|\n";
+        String command = dir.ordinal()+"|"+String.valueOf(speed)+"|"+steer.ordinal()+"|" + String.valueOf(steerAngle) + "|\n";
         Log.d("Command",command);
         return command;
     }
@@ -219,17 +160,40 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         } else {
             steer = Steering.STRAIGHT;
         }
-        double angle = ((2*x/Math.PI)*90);
-        steerAngle = (int) angle;
-        steerAngle = steerAngle*2;
-        if(y > -0.2){
-            speed = 255;
-        } else if(y <= -0.7) {
+
+        // 45 degr = 100%, -45 deg = -100%, 0 deg = 0
+        double XValue = x;
+        double angleThreshold = Math.PI/16;
+        double angleCap = Math.PI/8;
+        if(XValue < angleThreshold && XValue > -angleThreshold){
+            steerAngle = 0;
+        } else if(XValue > angleCap) {
+            steerAngle = 100;
+        } else if(XValue < -angleCap) {
+            steerAngle = -100;
+        } else if(XValue > angleThreshold) {
+            steerAngle = (int) (( (XValue - angleThreshold) / (angleCap - angleThreshold)) * 100);
+        } else if(XValue < -angleThreshold) {
+            steerAngle = (int) (( (XValue + angleThreshold) / (angleCap - angleThreshold)) * 100);
+        }
+        // speed
+        double speedThreshold = Math.PI/16;
+        double maxSpeed = Math.PI/8;
+        double maxSpeedValue = 255;
+        if(y < speedThreshold && y > -speedThreshold) {
             speed = 0;
-        } else {
-            y = y + 0.7f;
-            double result = (y/0.5)*255;
-            speed = (int) result;
+        } else if(y > maxSpeed) {
+            dir = Direction.FORWARD;
+            speed = 255;
+        } else if(y < -maxSpeed) {
+            dir = Direction.BACK;
+            speed = 255;
+        } else if(y > speedThreshold) {
+            dir = Direction.FORWARD;
+            speed = (int) (maxSpeedValue * ((y - speedThreshold) / (maxSpeed - speedThreshold)));
+        } else if(y < -speedThreshold) {
+            dir = Direction.BACK;
+            speed = (int) (maxSpeedValue * ((-y - speedThreshold) / (maxSpeed - speedThreshold)));
         }
 
         this.sendMessage();

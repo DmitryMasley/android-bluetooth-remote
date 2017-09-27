@@ -108,17 +108,19 @@ void loop() {
 //      }
     int angleValue = angle.toInt();
     Serial.println(angleValue);
+    int ASpeed = speedValue;
+    int BSpeed = speedValue;
     if(angleValue > 0) {
-       analogWrite(speedPinA, speedValue-angleValue);
-       analogWrite(speedPinB, speedValue);
+      BSpeed = speedValue - (int) (angleValue * speedValue / 100);
     }
     if(angleValue < 0) {
-       analogWrite(speedPinA, speedValue);
-       analogWrite(speedPinB, speedValue-angleValue);
+      ASpeed = speedValue - (int) ((-angleValue) * speedValue / 100);
     }
-    if(angleValue == 0) {
-       analogWrite(speedPinA, speedValue);
-       analogWrite(speedPinB, speedValue);
-    }  
+    Serial.println("ASpeed: ");
+    Serial.println(ASpeed);
+    Serial.println("BSpeed: ");
+    Serial.println(BSpeed);
+    analogWrite(speedPinA, ASpeed);
+    analogWrite(speedPinB, BSpeed);  
 }
 }
