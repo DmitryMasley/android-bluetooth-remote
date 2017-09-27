@@ -78,7 +78,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        mSensorManager.registerListener(this, mSensor, 1000000);
+        mSensorManager.registerListener(this, mSensor, 100000);
 
         orientation[1] = 0;
         orientation[2] = 0;
