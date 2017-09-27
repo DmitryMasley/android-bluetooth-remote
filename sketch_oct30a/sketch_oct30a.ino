@@ -58,21 +58,22 @@ void loop() {
     String speed = ptr;
     ptr = strtok(NULL, "|");
     String steering = ptr;
+    ptr = strtok(NULL, "|");
+    String angle = ptr;
     Serial.println(direction);
     Serial.println(speed);
     Serial.println(steering);
     
-    speed = speed.substring(6);
     int speedValue = speed.toInt();
     Serial.println(speedValue);
     if(speedValue > 0){
-      if(direction.equals("Dir:BACK")){
+      if(direction.equals("1")){
         Serial.println("Go Back");
           digitalWrite(dir1PinA, LOW);
           digitalWrite(dir2PinA, HIGH);
           digitalWrite(dir1PinB, LOW);
           digitalWrite(dir2PinB, HIGH);
-      }else if(direction.equals("Dir:FORWARD")){
+      }else if(direction.equals("0")){
         Serial.println("Go Froward");
           digitalWrite(dir1PinA, HIGH);
           digitalWrite(dir2PinA, LOW);    
@@ -88,25 +89,36 @@ void loop() {
       digitalWrite(dir2PinB, LOW);
       analogWrite(speedPinB, 0);
     }
-      if(steering.equals("Steer:LEFT")){
-        Serial.println("Go left");
-        if(speedValue > 0){
-          analogWrite(speedPinA, speedValue);
-          analogWrite(speedPinB, 0);
-        }
-      } else if(steering.equals("Steer:RIGHT")){
-        Serial.println("Go right");
-       if(speedValue > 0){
-          analogWrite(speedPinA, 0);
-          analogWrite(speedPinB, speedValue);
-        }
-      } else if(steering.equals("Steer:STRAIGHT")){
-        Serial.println("Go straight");
-        analogWrite(speedPinA, speedValue);
-        analogWrite(speedPinB, speedValue);
-      }
-      currentSteering = steering;
-    Serial.println("Command:" + command);
-  
+//      if(steering.equals("0")){
+//        Serial.println("Go left");
+//        if(speedValue > 0){
+//          analogWrite(speedPinA, speedValue);
+//          analogWrite(speedPinB, 0);
+//        }
+//      } else if(steering.equals("1")){
+//        Serial.println("Go right");
+//       if(speedValue > 0){
+//          analogWrite(speedPinA, 0);
+//          analogWrite(speedPinB, speedValue);
+//        }
+//      } else if(steering.equals("2")){
+//        Serial.println("Go straight");
+//        analogWrite(speedPinA, speedValue);
+//        analogWrite(speedPinB, speedValue);
+//      }
+    int angleValue = angle.toInt();
+    Serial.println(angleValue);
+    if(angleValue > 0) {
+       analogWrite(speedPinA, speedValue-angleValue);
+       analogWrite(speedPinB, speedValue);
+    }
+    if(angleValue < 0) {
+       analogWrite(speedPinA, speedValue);
+       analogWrite(speedPinB, speedValue-angleValue);
+    }
+    if(angleValue == 0) {
+       analogWrite(speedPinA, speedValue);
+       analogWrite(speedPinB, speedValue);
+    }  
 }
 }

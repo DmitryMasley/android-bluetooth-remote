@@ -1,5 +1,6 @@
 package com.example.dmasley.androidbluetoothremote;
 import com.example.dmasley.androidbluetoothremote.bluetooth.ConnectionCreationThread;
+import java.lang.Math;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -163,7 +164,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         }
     }
     private String getCommand(){
-        String command = "Dir:"+dir.name()+"|Speed:"+String.valueOf(speed)+"|Steer:"+steer.name()+"|\n";
+        String command = dir.ordinal()+"|"+String.valueOf(speed)+"|"+steer.ordinal()+"|" + steerAngle + "|\n";
         Log.d("Command",command);
         return command;
     }
@@ -211,15 +212,16 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     private void orientationUpdated(){
         float x = orientation[1];
         float y = orientation[2];
-        if(x > 0.15){
-            steerAngle = 20;
+        if(x > 0.2){
             steer = Steering.LEFT;
-        } else if(x < -0.15){
-            steerAngle = 160;
+        } else if(x < -0.2){
             steer = Steering.RIGHT;
         } else {
             steer = Steering.STRAIGHT;
         }
+        double angle = ((2*x/Math.PI)*90);
+        steerAngle = (int) angle;
+        steerAngle = steerAngle*2;
         if(y > -0.2){
             speed = 255;
         } else if(y <= -0.7) {
