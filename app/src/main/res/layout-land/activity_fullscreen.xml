@@ -71,5 +71,14 @@
             android:layout_alignStart="@+id/textView"
             android:layout_marginBottom="15dp"
             android:padding="5dp" />
+
+        <Switch
+            android:text="Full sensor control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="22dp"
+            android:id="@+id/useSensorForSpeed"
+            android:layout_above="@+id/label"
+            android:layout_toStartOf="@+id/speedSeekBar" />
     </RelativeLayout>
 </FrameLayout>

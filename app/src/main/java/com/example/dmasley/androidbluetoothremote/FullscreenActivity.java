@@ -14,6 +14,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.SeekBar;
 import android.hardware.Sensor;
@@ -48,10 +50,12 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     private int speed = 0;
     private Steering steer = Steering.STRAIGHT;
     private int steerAngle = 0;
+    private int maxValueOfSpeedBar = 510;
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private final float[] mRotationMatrix = new float[16];
     private final float[] orientation = new float[3];
+    private boolean useSensorForSpeed = false;
     ConnectionCreationThread create;
     public FullscreenActivity(){
 
@@ -63,6 +67,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     TextView speedText;
     TextView steerText;
     SeekBar speedBar;
+    Switch useSensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,11 +96,16 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         speedText = (TextView) findViewById(R.id.speed);
         steerText = (TextView) findViewById(R.id.steer);
         speedBar = (SeekBar) findViewById(R.id.speedSeekBar);
+        speedBar.setMax(maxValueOfSpeedBar);
+        speedBar.setProgress((maxValueOfSpeedBar/2));
+
+        useSensor = (Switch) findViewById(R.id.useSensorForSpeed);
+        useSensor.setChecked(useSensorForSpeed);
 
         speedBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int currentSeed = progress - 255;
+                int currentSeed = progress - maxValueOfSpeedBar/2;
                 if(currentSeed < 0){
                     dir = Direction.BACK;
                     speed = -currentSeed;
@@ -114,9 +124,17 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                seekBar.setProgress(50);
+                // middle of the bar
+                seekBar.setProgress(maxValueOfSpeedBar/2);
                 speed = 0;
                 sendMessage();
+            }
+        });
+
+        useSensor.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton button, boolean value) {
+                useSensorForSpeed = value;
             }
         });
 
@@ -207,24 +225,26 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         } else if(XValue < -angleThreshold) {
             steerAngle = (int) (( (XValue + angleThreshold) / (angleCap - angleThreshold)) * 100);
         }
-        // speed
-        double speedThreshold = Math.PI/16;
-        double maxSpeed = Math.PI/8;
-        double maxSpeedValue = 255;
-        if(y < speedThreshold && y > -speedThreshold) {
-            speed = 0;
-        } else if(y > maxSpeed) {
-            dir = Direction.FORWARD;
-            speed = 255;
-        } else if(y < -maxSpeed) {
-            dir = Direction.BACK;
-            speed = 255;
-        } else if(y > speedThreshold) {
-            dir = Direction.FORWARD;
-            speed = (int) (maxSpeedValue * ((y - speedThreshold) / (maxSpeed - speedThreshold)));
-        } else if(y < -speedThreshold) {
-            dir = Direction.BACK;
-            speed = (int) (maxSpeedValue * ((-y - speedThreshold) / (maxSpeed - speedThreshold)));
+        if(useSensorForSpeed) {
+            // speed
+            double speedThreshold = Math.PI / 16;
+            double maxSpeed = Math.PI / 8;
+            double maxSpeedValue = 255;
+            if (y < speedThreshold && y > -speedThreshold) {
+                speed = 0;
+            } else if (y > maxSpeed) {
+                dir = Direction.FORWARD;
+                speed = 255;
+            } else if (y < -maxSpeed) {
+                dir = Direction.BACK;
+                speed = 255;
+            } else if (y > speedThreshold) {
+                dir = Direction.FORWARD;
+                speed = (int) (maxSpeedValue * ((y - speedThreshold) / (maxSpeed - speedThreshold)));
+            } else if (y < -speedThreshold) {
+                dir = Direction.BACK;
+                speed = (int) (maxSpeedValue * ((-y - speedThreshold) / (maxSpeed - speedThreshold)));
+            }
         }
 
         this.sendMessage();
