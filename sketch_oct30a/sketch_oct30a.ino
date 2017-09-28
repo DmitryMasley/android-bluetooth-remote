@@ -67,6 +67,7 @@ void loop() {
     int speedValue = speed.toInt();
     Serial.println(speedValue);
     if(speedValue > 0){
+      //turn on move
       if(direction.equals("1")){
         Serial.println("Go Back");
           digitalWrite(dir1PinA, LOW);
@@ -89,38 +90,44 @@ void loop() {
       digitalWrite(dir2PinB, LOW);
       analogWrite(speedPinB, 0);
     }
-//      if(steering.equals("0")){
-//        Serial.println("Go left");
-//        if(speedValue > 0){
-//          analogWrite(speedPinA, speedValue);
-//          analogWrite(speedPinB, 0);
-//        }
-//      } else if(steering.equals("1")){
-//        Serial.println("Go right");
-//       if(speedValue > 0){
-//          analogWrite(speedPinA, 0);
-//          analogWrite(speedPinB, speedValue);
-//        }
-//      } else if(steering.equals("2")){
-//        Serial.println("Go straight");
-//        analogWrite(speedPinA, speedValue);
-//        analogWrite(speedPinB, speedValue);
-//      }
     int angleValue = angle.toInt();
     Serial.println(angleValue);
-    int ASpeed = speedValue;
-    int BSpeed = speedValue;
-    if(angleValue > 0) {
-      BSpeed = speedValue - (int) (angleValue * speedValue / 100);
+    if(speedValue > 0) {
+      int ASpeed = speedValue;
+      int BSpeed = speedValue;
+      if(angleValue > 0) {
+        BSpeed = speedValue - (int) (angleValue * speedValue / 100);
+      }
+      if(angleValue < 0) {
+        ASpeed = speedValue - (int) ((-angleValue) * speedValue / 100);
+      }
+      Serial.println("ASpeed: ");
+      Serial.println(ASpeed);
+      Serial.println("BSpeed: ");
+      Serial.println(BSpeed);
+      analogWrite(speedPinA, ASpeed);
+      analogWrite(speedPinB, BSpeed);  
+    } else {
+      // turn around
+      int ASpeed;
+      int BSpeed;
+      if(angleValue > 0) {
+        BSpeed = (int) (angleValue * 255 / 100);  
+        digitalWrite(dir1PinA, HIGH);
+        digitalWrite(dir2PinA, LOW);    
+        digitalWrite(dir1PinB, LOW);
+        digitalWrite(dir2PinB, HIGH);    
+      }
+      if(angleValue < 0) {
+        BSpeed = (int) ((-angleValue) * 255 / 100);
+        digitalWrite(dir1PinA, LOW);
+        digitalWrite(dir2PinA, HIGH);    
+        digitalWrite(dir1PinB, HIGH);
+        digitalWrite(dir2PinB, LOW);   
+      }
+      ASpeed = BSpeed;
+      analogWrite(speedPinA, ASpeed);
+      analogWrite(speedPinB, BSpeed);  
     }
-    if(angleValue < 0) {
-      ASpeed = speedValue - (int) ((-angleValue) * speedValue / 100);
-    }
-    Serial.println("ASpeed: ");
-    Serial.println(ASpeed);
-    Serial.println("BSpeed: ");
-    Serial.println(BSpeed);
-    analogWrite(speedPinA, ASpeed);
-    analogWrite(speedPinB, BSpeed);  
 }
 }

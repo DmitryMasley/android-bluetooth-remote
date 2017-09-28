@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
+    android:background="@android:color/background_light"
     tools:context="com.example.dmasley.androidbluetoothremote.FullscreenActivity"
     android:keepScreenOn="true">
 
@@ -19,33 +19,57 @@
         android:touchscreenBlocksFocus="true">
 
         <TextView
-            android:text="Speed:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/label" />
-
-        <TextView
-            android:text="Steering"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/label"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="14dp"
-            android:id="@+id/textView" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/textView"
-            android:layout_marginStart="19dp"
-            android:id="@+id/speed" />
+            android:id="@+id/speed"
+            android:layout_alignTop="@+id/label"
+            android:layout_alignBottom="@+id/label"
+            android:padding="5dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/textView"
-            android:layout_alignStart="@+id/speed"
-            android:id="@+id/steer" />
+            android:id="@+id/steer"
+            android:layout_toEndOf="@+id/speed"
+            android:padding="5dp" />
+
+        <SeekBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/speedSeekBar"
+            android:minHeight="89dp"
+            android:minWidth="200dp"
+            android:progressDrawable="@drawable/seekbar_style"
+            android:rotation="-90"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="-50dp"
+            android:progress="255"
+            android:max="510"
+            android:thumb="@drawable/custom_thumb"
+            android:splitTrack="false" />
+
+        <TextView
+            android:text="Steering"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView"
+            android:layout_marginStart="22dp"
+            android:layout_alignBottom="@+id/speedSeekBar"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="22dp"
+            android:padding="5dp" />
+
+        <TextView
+            android:text="Speed:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/label"
+            android:layout_above="@+id/textView"
+            android:layout_alignStart="@+id/textView"
+            android:layout_marginBottom="15dp"
+            android:padding="5dp" />
     </RelativeLayout>
 </FrameLayout>

@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<BluetoothDeviceItemView> devicesArrayAdapter;
     ConnectionThread connectionThread;
 
-    MainActivity(){
+    public MainActivity(){
         adapter = BluetoothAdapter.getDefaultAdapter();
     }
     protected void onCreate(Bundle savedInstanceState) {

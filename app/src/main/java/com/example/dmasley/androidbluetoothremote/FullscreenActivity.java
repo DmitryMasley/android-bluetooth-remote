@@ -53,7 +53,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     private final float[] mRotationMatrix = new float[16];
     private final float[] orientation = new float[3];
     ConnectionCreationThread create;
-    FullscreenActivity(){
+    public FullscreenActivity(){
 
 
     }
@@ -62,6 +62,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
     TextView speedText;
     TextView steerText;
+    SeekBar speedBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +90,36 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     void initializeUI(){
         speedText = (TextView) findViewById(R.id.speed);
         steerText = (TextView) findViewById(R.id.steer);
+        speedBar = (SeekBar) findViewById(R.id.speedSeekBar);
+
+        speedBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                int currentSeed = progress - 255;
+                if(currentSeed < 0){
+                    dir = Direction.BACK;
+                    speed = -currentSeed;
+                } else {
+                    dir = Direction.FORWARD;
+                    speed = currentSeed;
+                }
+                sendMessage();
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                seekBar.setProgress(50);
+                speed = 0;
+                sendMessage();
+            }
+        });
+
     }
     void updateUI() {
         double speedValue = speed;
