@@ -1,4 +1,5 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,45 +22,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/textView"
-            android:id="@+id/speed"
-            android:layout_alignTop="@+id/label"
-            android:layout_alignBottom="@+id/label"
-            android:padding="5dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_alignTop="@+id/textView"
             android:id="@+id/steer"
             android:layout_toEndOf="@+id/speed"
-            android:padding="5dp" />
-
-        <SeekBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/speedSeekBar"
-            android:minHeight="89dp"
-            android:minWidth="200dp"
-            android:progressDrawable="@drawable/seekbar_style"
-            android:rotation="-90"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="-50dp"
-            android:progress="255"
-            android:max="510"
-            android:thumb="@drawable/custom_thumb"
-            android:splitTrack="false" />
-
-        <TextView
-            android:text="Steering"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView"
-            android:layout_marginStart="22dp"
-            android:layout_alignBottom="@+id/speedSeekBar"
-            android:layout_alignParentStart="true"
-            android:layout_marginBottom="22dp"
             android:padding="5dp" />
 
         <TextView
@@ -67,18 +32,73 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/label"
-            android:layout_above="@+id/textView"
-            android:layout_alignStart="@+id/textView"
-            android:layout_marginBottom="15dp"
-            android:padding="5dp" />
+            android:padding="5dp"
+            android:layout_below="@+id/useSensorForSpeed"
+            android:layout_alignStart="@+id/useSensorForSpeed" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/speed"
+            android:padding="5dp"
+            android:layout_alignBaseline="@+id/label"
+            android:layout_alignBottom="@+id/label"
+            android:layout_centerHorizontal="true" />
 
         <Switch
             android:text="Full sensor control"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="22dp"
             android:id="@+id/useSensorForSpeed"
-            android:layout_above="@+id/label"
-            android:layout_toStartOf="@+id/speedSeekBar" />
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="21dp" />
+
+        <TextView
+            android:text="Steering"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView"
+            android:padding="5dp"
+            android:layout_below="@+id/label"
+            android:layout_alignStart="@+id/label" />
+
+        <ImageButton
+            android:layout_height="150dp"
+            app:srcCompat="@drawable/ic_keyboard_arrow_left_black_48dp"
+            android:id="@+id/left_btn"
+            android:layout_marginStart="11dp"
+            android:layout_width="90dp"
+            android:layout_below="@+id/label"
+            android:layout_alignParentStart="true"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:layout_width="90dp"
+            app:srcCompat="@drawable/ic_keyboard_arrow_right_black_48dp"
+            android:id="@+id/right_btn"
+            android:layout_height="150dp"
+            android:layout_below="@+id/label"
+            android:layout_toStartOf="@+id/label"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:layout_width="150dp"
+            android:layout_height="90dp"
+            app:srcCompat="@drawable/ic_keyboard_arrow_down_black_48dp"
+            android:id="@+id/bck_btn"
+            android:layout_marginTop="25dp"
+            android:layout_below="@+id/frw_btn"
+            android:layout_alignParentEnd="true" />
+
+        <ImageButton
+            android:layout_width="150dp"
+            android:layout_height="90dp"
+            app:srcCompat="@drawable/ic_keyboard_arrow_up_black_48dp"
+            android:id="@+id/frw_btn"
+            android:layout_below="@+id/useSensorForSpeed"
+            android:layout_alignParentEnd="true" />
+
     </RelativeLayout>
+
 </FrameLayout>

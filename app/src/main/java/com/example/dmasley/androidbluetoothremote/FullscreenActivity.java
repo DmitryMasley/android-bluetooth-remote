@@ -12,9 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.SeekBar;
@@ -65,9 +67,12 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     private final Handler mHideHandler = new Handler();
 
     TextView speedText;
-    TextView steerText;
-    SeekBar speedBar;
+    TextView steerText;;
     Switch useSensor;
+    ImageButton frw;
+    ImageButton bck;
+    ImageButton left;
+    ImageButton right;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,46 +100,74 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     void initializeUI(){
         speedText = (TextView) findViewById(R.id.speed);
         steerText = (TextView) findViewById(R.id.steer);
-        speedBar = (SeekBar) findViewById(R.id.speedSeekBar);
-        speedBar.setMax(maxValueOfSpeedBar);
-        speedBar.setProgress((maxValueOfSpeedBar/2));
 
         useSensor = (Switch) findViewById(R.id.useSensorForSpeed);
         useSensor.setChecked(useSensorForSpeed);
 
-        speedBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int currentSeed = progress - maxValueOfSpeedBar/2;
-                if(currentSeed < 0){
-                    dir = Direction.BACK;
-                    speed = -currentSeed;
-                } else {
-                    dir = Direction.FORWARD;
-                    speed = currentSeed;
-                }
-                sendMessage();
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // middle of the bar
-                seekBar.setProgress(maxValueOfSpeedBar/2);
-                speed = 0;
-                sendMessage();
-            }
-        });
 
         useSensor.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton button, boolean value) {
                 useSensorForSpeed = value;
+            }
+        });
+
+        bck = (ImageButton) findViewById(R.id.bck_btn);
+        frw = (ImageButton) findViewById(R.id.frw_btn);
+        left = (ImageButton) findViewById(R.id.left_btn);
+        right = (ImageButton) findViewById(R.id.right_btn);
+        bck.setOnTouchListener(new ImageButton.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent e) {
+                int action = e.getAction();
+                if(action == MotionEvent.ACTION_DOWN) {
+                    speed = 255;
+                    dir = Direction.BACK;
+                } else if (action == MotionEvent.ACTION_UP) {
+                    speed = 0;
+                }
+                sendMessage();
+                return true;
+            }
+        });
+        frw.setOnTouchListener(new ImageButton.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent e) {
+                int action = e.getAction();
+                if(action == MotionEvent.ACTION_DOWN) {
+                    speed = 255;
+                    dir = Direction.FORWARD;
+                } else if (action == MotionEvent.ACTION_UP) {
+                    speed = 0;
+                }
+                sendMessage();
+                return true;
+            }
+        });
+        left.setOnTouchListener(new ImageButton.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent e) {
+                int action = e.getAction();
+                if(action == MotionEvent.ACTION_DOWN) {
+                    steerAngle = -100;
+                } else if (action == MotionEvent.ACTION_UP) {
+                    steerAngle = 0;
+                }
+                sendMessage();
+                return true;
+            }
+        });
+        right.setOnTouchListener(new ImageButton.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent e) {
+                int action = e.getAction();
+                if(action == MotionEvent.ACTION_DOWN) {
+                    steerAngle = 100;
+                } else if (action == MotionEvent.ACTION_UP) {
+                    steerAngle = 0;
+                }
+                sendMessage();
+                return true;
             }
         });
 
