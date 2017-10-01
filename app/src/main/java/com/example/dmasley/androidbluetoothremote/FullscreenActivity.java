@@ -84,7 +84,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        mSensorManager.registerListener(this, mSensor, 100000);
+        mSensorManager.registerListener(this, mSensor, 50000);
 
         orientation[1] = 0;
         orientation[2] = 0;
@@ -213,7 +213,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         // 45 degr = 100%, -45 deg = -100%, 0 deg = 0
         double XValue = x;
         double angleThreshold = Math.PI/16;
-        double angleCap = Math.PI/8;
+        double angleCap = Math.PI/6;
         if(XValue < angleThreshold && XValue > -angleThreshold){
             steerAngle = 0;
         } else if(XValue > angleCap) {
@@ -228,7 +228,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         if(useSensorForSpeed) {
             // speed
             double speedThreshold = Math.PI / 16;
-            double maxSpeed = Math.PI / 8;
+            double maxSpeed = Math.PI / 6;
             double maxSpeedValue = 255;
             if (y < speedThreshold && y > -speedThreshold) {
                 speed = 0;
