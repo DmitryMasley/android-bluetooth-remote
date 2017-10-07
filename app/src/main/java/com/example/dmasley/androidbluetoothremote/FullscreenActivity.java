@@ -89,7 +89,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        mSensorManager.registerListener(this, mSensor, 50000);
+        mSensorManager.registerListener(this, mSensor, 5000);
 
         orientation[1] = 0;
         orientation[2] = 0;
@@ -235,18 +235,12 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     private void orientationUpdated(){
         float x = orientation[1];
         float y = orientation[2];
-        if(x > 0.2){
-            steer = Steering.LEFT;
-        } else if(x < -0.2){
-            steer = Steering.RIGHT;
-        } else {
-            steer = Steering.STRAIGHT;
-        }
 
         // 45 degr = 100%, -45 deg = -100%, 0 deg = 0
         double XValue = x;
-        double angleThreshold = Math.PI/16;
-        double angleCap = Math.PI/6;
+        double angleThreshold = Math.PI / 16;
+        double angleCap = Math.PI / 4;
+        double maxValue = Math.log(angleCap/angleThreshold);
         if(XValue < angleThreshold && XValue > -angleThreshold){
             steerAngle = 0;
         } else if(XValue > angleCap) {
@@ -254,16 +248,18 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         } else if(XValue < -angleCap) {
             steerAngle = -100;
         } else if(XValue > angleThreshold) {
-            steerAngle = (int) (( (XValue - angleThreshold) / (angleCap - angleThreshold)) * 100);
+            steerAngle = (int) (100 * Math.log(XValue/angleThreshold)/maxValue);
         } else if(XValue < -angleThreshold) {
-            steerAngle = (int) (( (XValue + angleThreshold) / (angleCap - angleThreshold)) * 100);
+
+            steerAngle = (int) (-100 * Math.log(-XValue/angleThreshold)/maxValue);
         }
         if(useSensorForSpeed) {
             // speed
             double speedThreshold = Math.PI / 16;
-            double maxSpeed = Math.PI / 6;
-            double maxSpeedValue = 255;
-            if (y < speedThreshold && y > -speedThreshold) {
+            double maxSpeed = Math.PI / 4;
+            double maxSpeedValue = 155;
+            double maxLogValue = Math.log(maxSpeed/speedThreshold);
+            if (y <= speedThreshold && y >= -speedThreshold) {
                 speed = 0;
             } else if (y > maxSpeed) {
                 dir = Direction.FORWARD;
@@ -273,10 +269,10 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
                 speed = 255;
             } else if (y > speedThreshold) {
                 dir = Direction.FORWARD;
-                speed = (int) (maxSpeedValue * ((y - speedThreshold) / (maxSpeed - speedThreshold)));
+                speed = (int) (maxSpeedValue * Math.log(y/speedThreshold)/maxLogValue);
             } else if (y < -speedThreshold) {
                 dir = Direction.BACK;
-                speed = (int) (maxSpeedValue * ((-y - speedThreshold) / (maxSpeed - speedThreshold)));
+                speed = (int) (maxSpeedValue * Math.log(-y/speedThreshold)/maxLogValue);
             }
         }
 
